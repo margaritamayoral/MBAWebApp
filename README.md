@@ -1,2 +1,2 @@
 # MBAWebApp
-Web App for Market Basket Analysis exmaples
+Web App for Market Basket Analysis examples
