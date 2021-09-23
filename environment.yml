@@ -1,0 +1,4 @@
+name: FlaskWebapp
+channels:
+  - defaults
+prefix: /Users/margaritamayoralvilla/miniconda3/envs/FlaskWebapp
