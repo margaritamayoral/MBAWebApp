@@ -26,7 +26,7 @@ p.productQuantity
 FROM 
 `bigquery-public-data.google_analytics_sample.ga_sessions_*` AS T,
 UNNEST(T.hits) AS h, UNNEST(h.product) AS p
-WHERE T._TABLE_SUFFIX BETWEEN "20170101" AND "20170215"
+WHERE T._TABLE_SUFFIX BETWEEN "20170101" AND "20170301"
 AND transaction.transactionId IS NOT NULL
 """
 query_job = client.query(query_string)

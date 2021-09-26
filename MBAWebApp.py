@@ -30,36 +30,35 @@ def association_rules_analysis(brand_name, initialDate, endingDate, min_support,
   dataset_name = 'mba_test_data'
   project_id = 'starklab'
   params = {
-    'initialDate' : str(initialDate),
+    'initialDate': str(initialDate),
     'endingDate': str(endingDate),
   }
-  table = bigquery-public-data.google_analytics_sample.ga_sessions_*
   query_config = bigquery.QueryJobConfig(use_legacy_sql=True)
-  query_template = """
-  SELECT
-  date, 
-  fullVisitorId, -- Cookie or Visitor Id
-  transaction.transactionId, 
-  p.productSKU,
-  p.v2ProductName,
-  p.v2ProductCategory,
-  p.productRevenue,
-  (p.productPrice/100000) AS price,
-  p.productBrand,	
-  p.productQuantity	
-  FROM 
-  [bigquery-public-data.google_analytics_sample.ga_sessions_*] AS T,
-  UNNEST(T.hits) AS h, UNNEST(h.product) AS p
-  WHERE T._TABLE_SUFFIX BETWEEN {{ initialDate}} AND {{ endingDate }}
-  AND transaction.transactionId IS NOT NULL
-  """
   #query_template = """
   #SELECT
-  #*
+  #date,
+  #fullVisitorId, -- Cookie or Visitor Id
+  #transaction.transactionId,
+  #p.productSKU,
+  #p.v2ProductName,
+  #p.v2ProductCategory,
+  #p.productRevenue,
+  #(p.productPrice/100000) AS price,
+  #p.productBrand,
+  #p.productQuantity
   #FROM
-  #[starklab.mba_test_data.mba_ardene_dataset]
-  #WHERE date BETWEEN {{ initialDate}} AND {{ endingDate }}
+  #[bigquery-public-data.google_analytics_sample.ga_sessions_*] AS T,
+  #UNNEST(T.hits) AS h, UNNEST(h.product) AS p
+  #WHERE T._TABLE_SUFFIX BETWEEN {{ initialDate}} AND {{ endingDate }}
+  #AND transaction.transactionId IS NOT NULL
   #"""
+  query_template = """
+  SELECT
+  *
+  FROM
+  [starklab.mba_test_data.mba_ardene_dataset]
+  WHERE date BETWEEN {{ initialDate }} AND {{ endingDate }}
+  """
   j = JinjaSql(param_style='pyformat')
   query, bind_params = j.prepare_query(query_template, params)
   #dataset = get_sql_from_template(query, bind_params)
@@ -88,7 +87,7 @@ def association_rules_analysis(brand_name, initialDate, endingDate, min_support,
   print(frq_items_formatted)
   print("this is the unformatted dataset")
   print(frq_items)
-  rules = association_rules(frq_items, metric = 'lift', min_threshold = 0.5)
+  rules = association_rules(frq_items, metric='lift', min_threshold=0.5)
   rules["antecedents"] = rules["antecedents"].apply(lambda x: list(x)).astype("unicode")
   rules["consequents"] = rules["consequents"].apply(lambda x: list(x)).astype("unicode")
   support=rules['support'].tolist()
@@ -125,4 +124,4 @@ def association_rules_analysis(brand_name, initialDate, endingDate, min_support,
 
 
 if __name__ == '__main__':
-  association_rules_analysis('test', 20170101, 20170215, 0.005, 'ga_test_rules', 'ga_test_freq')
+  association_rules_analysis('test', '20210101', '20210115', 0.002, 'ga_test_rules', 'ga_test_freq')
